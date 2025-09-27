@@ -1,4 +1,4 @@
-import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker'
+import { launchImageLibraryAsync } from 'expo-image-picker'
 
 export const pickImage = async () => {
   const result = await launchImageLibraryAsync({

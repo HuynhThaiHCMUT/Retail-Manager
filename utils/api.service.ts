@@ -34,6 +34,13 @@ import {
 } from '../dto/order.dto'
 import { ZodObject } from 'zod'
 import { ImagePickerAsset } from 'expo-image-picker'
+import {
+  ChartQueryDto,
+  ChartItemDto,
+  SummaryQueryDto,
+  SummaryResponseDto,
+  TopSoldItemDto,
+} from '@/dto/report.dto'
 
 const mutex = new Mutex()
 
@@ -307,6 +314,24 @@ const api = createApi({
       }),
       invalidatesTags: ['Order'],
     }),
+    getSummary: builder.query<SummaryResponseDto, SummaryQueryDto>({
+      query: (params) => ({
+        url: 'reports/summary',
+        params,
+      }),
+    }),
+    getChart: builder.query<ChartItemDto[], ChartQueryDto>({
+      query: (params) => ({
+        url: 'reports/chart',
+        params,
+      }),
+    }),
+    getTopSold: builder.query<TopSoldItemDto[], SummaryQueryDto>({
+      query: (params) => ({
+        url: 'reports/top-sold',
+        params,
+      }),
+    }),
   }),
 })
 
@@ -331,5 +356,8 @@ export const {
   useCreatePOSOrderMutation,
   useUpdateOrderMutation,
   useDeleteOrderMutation,
+  useGetSummaryQuery,
+  useGetChartQuery,
+  useGetTopSoldQuery,
 } = api
 export default api

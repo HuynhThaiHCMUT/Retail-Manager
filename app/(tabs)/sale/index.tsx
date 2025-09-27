@@ -3,7 +3,10 @@ import { useAppSelector, useAppDispatch } from '@/hooks/useAppHooks'
 import { clearOrder, OrderProductItemDto } from '@/utils/order.slice'
 import { Button, Stack, Text, XStack } from 'tamagui'
 import { FlatList, Pressable } from 'react-native'
-import { OrderProductItem, OrderProductItemRef } from '@/components/OrderProductItem'
+import {
+  OrderProductItem,
+  OrderProductItemRef,
+} from '@/components/OrderProductItem'
 import { openDialog, registerDialogCallback } from '@/utils/dialog.slice'
 import { useCreatePOSOrderMutation } from '@/utils/api.service'
 import handleError from '@/utils/error-handler'
@@ -35,7 +38,7 @@ export default function SaleScreen() {
     }
   }
 
-  const renderItem = ({ item }: {item: OrderProductItemDto}) => {
+  const renderItem = ({ item }: { item: OrderProductItemDto }) => {
     const setRef = (r: OrderProductItemRef | null) => {
       if (r) rowRefs.current.set(item.id, r)
       else rowRefs.current.delete(item.id)
@@ -90,7 +93,7 @@ export default function SaleScreen() {
         productId: item.id,
         quantity: item.quantity,
         price: item.price,
-        unit: item.unit,
+        unitName: item.unit,
       })),
     })
     if (result.error) {

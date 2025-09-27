@@ -1,5 +1,5 @@
-import { GetProductsQueryDto } from "@/dto/product.dto"
-import { ThemeName } from "tamagui"
+import { GetProductsQueryDto } from '@/dto/product.dto'
+import { ThemeName } from 'tamagui'
 
 export const SORT_OPTIONS = [
   { label: 'Mới nhất', value: 'time' },

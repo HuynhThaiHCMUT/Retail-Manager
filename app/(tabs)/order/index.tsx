@@ -17,7 +17,7 @@ const normalize = (text: string) =>
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
 
-export default function Inventory() {
+export default function OrderList() {
   const router = useRouter()
   const { data, isFetching, error, refetch } = useGetOrdersQuery()
 

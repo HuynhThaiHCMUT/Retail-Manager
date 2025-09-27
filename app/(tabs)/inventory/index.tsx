@@ -5,11 +5,7 @@ import React from 'react'
 
 export default function Inventory() {
   const router = useRouter()
-  const onAddProduct = () => router.push('/(tabs)/inventory/product/new')
+  const onAddProduct = () => router.push('/(tabs)/inventory/new')
 
-  return (
-    <ProductList
-      showFAB={<FAB theme="blue" onPress={onAddProduct} />}
-    />
-  )
+  return <ProductList showFAB={<FAB theme="blue" onPress={onAddProduct} />} />
 }

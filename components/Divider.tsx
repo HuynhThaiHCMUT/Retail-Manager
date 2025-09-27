@@ -17,7 +17,9 @@ export function Divider({
   ...rest
 }: DividerProps) {
   const isHorizontal = type === 'horizontal'
-  const length = fullBleed ? Dimensions.get('window')[isHorizontal ? 'width' : 'height'] : '100%'
+  const length = fullBleed
+    ? Dimensions.get('window')[isHorizontal ? 'width' : 'height']
+    : '100%'
 
   return (
     <Stack

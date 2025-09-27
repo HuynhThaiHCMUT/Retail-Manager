@@ -1,5 +1,5 @@
 import { Controller, Control } from 'react-hook-form'
-import { Input, InputProps, Stack, StackProps, Text, ViewStyle } from 'tamagui'
+import { Input, InputProps, Stack, StackProps, Text } from 'tamagui'
 
 interface FormInputProps {
   name: string

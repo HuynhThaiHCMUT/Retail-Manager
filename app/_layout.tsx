@@ -39,8 +39,8 @@ function App() {
     getData()
   }, [])
 
-  const { colors } = useNavigationTheme();
-  colors.background = 'transparent';  
+  const { colors } = useNavigationTheme()
+  colors.background = 'transparent'
 
   return (
     <View bg="$background" flex={1}>

@@ -1,6 +1,11 @@
 import React, { useImperativeHandle, forwardRef } from 'react'
 import { YStack } from 'tamagui'
-import Animated, { useAnimatedStyle, useSharedValue, withTiming, runOnJS } from 'react-native-reanimated'
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  runOnJS,
+} from 'react-native-reanimated'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 
 export interface SwipeableRowRef {
@@ -25,7 +30,7 @@ export const SwipeableRow = forwardRef<SwipeableRowRef, SwipeableRowProps>(
     useImperativeHandle(ref, () => ({
       close: () => {
         translateX.value = withTiming(0, { duration: 300 })
-      }
+      },
     }))
 
     let pan = Gesture.Pan()
@@ -48,7 +53,7 @@ export const SwipeableRow = forwardRef<SwipeableRowRef, SwipeableRowProps>(
       })
 
     const animatedStyle = useAnimatedStyle(() => ({
-      transform: [{ translateX: translateX.value }]
+      transform: [{ translateX: translateX.value }],
     }))
 
     return (

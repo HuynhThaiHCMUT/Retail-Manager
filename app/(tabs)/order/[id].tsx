@@ -1,8 +1,16 @@
 import DataWrapper from '@/components/DataWrapper'
 import { Divider } from '@/components/Divider'
 import { OrderProductItem } from '@/components/OrderProductItem'
-import { ORDER_STATUS_COLORS, ORDER_STATUS, BASE_PRODUCT_QUERY } from '@/constants'
-import { useDeleteOrderMutation, useGetOrderQuery, useGetProductsQuery } from '@/utils/api.service'
+import {
+  ORDER_STATUS_COLORS,
+  ORDER_STATUS,
+  BASE_PRODUCT_QUERY,
+} from '@/constants'
+import {
+  useDeleteOrderMutation,
+  useGetOrderQuery,
+  useGetProductsQuery,
+} from '@/utils/api.service'
 import { registerDialogCallback, openDialog } from '@/utils/dialog.slice'
 import handleError from '@/utils/error-handler'
 import { useAppDispatch } from '@/hooks/useAppHooks'
@@ -57,17 +65,18 @@ export default function Order() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () =>
-      <Button size="$2" theme="red" onPress={onDelete}>
-        <Trash2 size={12} />
-        Xoá
-      </Button>,
+      headerRight: () => (
+        <Button size="$2" theme="red" onPress={onDelete}>
+          <Trash2 size={12} />
+          Xoá
+        </Button>
+      ),
     })
   }, [id, navigation])
 
   return (
-    <DataWrapper p='$0' isLoading={isLoading} error={error} refetch={refetch}>
-      <Stack p='$4' gap='$4'>
+    <DataWrapper p="$0" isLoading={isLoading} error={error} refetch={refetch}>
+      <Stack p="$4" gap="$4">
         <Text fontWeight="bold" fontSize="$4">
           Mã đơn hàng: #{data?.name}
         </Text>
@@ -76,10 +85,10 @@ export default function Order() {
         </Text>
         <XStack>
           <Text>Trạng thái: </Text>
-          <Text 
+          <Text
             theme={ORDER_STATUS_COLORS[data?.status ?? 'PENDING']}
-            bg='$color6'
-            color='$color12'
+            bg="$color6"
+            color="$color12"
             px="$2"
             rounded="$6"
           >
@@ -87,15 +96,17 @@ export default function Order() {
           </Text>
         </XStack>
       </Stack>
-      <Divider thickness={4}/>
-      <Stack p='$4' gap='$2'>
-        <Text fontSize='$6' fontWeight='bold'>
+      <Divider thickness={4} />
+      <Stack p="$4" gap="$2">
+        <Text fontSize="$6" fontWeight="bold">
           Sản phẩm
         </Text>
         <FlatList
           data={orderProducts ?? []}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <OrderProductItem item={item} editable={false} />}
+          renderItem={({ item }) => (
+            <OrderProductItem item={item} editable={false} />
+          )}
         />
       </Stack>
     </DataWrapper>

@@ -1,5 +1,5 @@
-import { Select, SelectProps } from "./Select"
-import { Label, Text } from "tamagui"
+import { Select, SelectProps } from './Select'
+import { Text } from 'tamagui'
 import { ArrowUpDown } from '@tamagui/lucide-icons'
 
 interface SortSelectProps extends Omit<SelectProps, 'trigger'> {}
@@ -8,7 +8,11 @@ export function SortSelect(props: SortSelectProps) {
   const { options, value, placeholder } = props
 
   const selectedLabel =
-    options.find((opt) => opt.value === value)?.label ?? placeholder ?? 'Sort...'
+    typeof options[0] === 'string'
+      ? ((options as string[]).find((opt) => opt === value) ?? placeholder)
+      : ((options as { label: string; value: string }[]).find(
+          (opt) => opt.value === value
+        )?.label ?? placeholder)
 
   return (
     <Select
@@ -16,7 +20,9 @@ export function SortSelect(props: SortSelectProps) {
       trigger={
         <>
           <ArrowUpDown size={16} />
-          <Text fontSize="$3" ml="$2">{selectedLabel}</Text>
+          <Text fontSize="$3" ml="$2">
+            {selectedLabel}
+          </Text>
         </>
       }
     />

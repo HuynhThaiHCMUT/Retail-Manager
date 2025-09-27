@@ -33,7 +33,7 @@ const DataWrapper = ({
 
   if (error) {
     return (
-      <Stack 
+      <Stack
         p="$4"
         width="100%"
         height="100%"
@@ -50,7 +50,11 @@ const DataWrapper = ({
     )
   }
 
-  return <Stack p='$4' flex={1} {...rest}>{children}</Stack>
+  return (
+    <Stack p="$4" flex={1} {...rest}>
+      {children}
+    </Stack>
+  )
 }
 
 export default DataWrapper

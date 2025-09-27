@@ -6,14 +6,16 @@ interface SearchBarProps {
   onChange: (text: string) => void
 }
 
-export const SearchBar: React.FC<SearchBarProps> = ({ value, onChange }) => (
-  <Stack>
-    <Input
-      p="$0"
-      size="$3"
-      placeholder="Tìm kiếm..."
-      value={value}
-      onChangeText={onChange}
-    />
-  </Stack>
-)
+export function SearchBar({ value, onChange }: SearchBarProps) {
+  return (
+    <Stack>
+      <Input
+        p="$0"
+        size="$3"
+        placeholder="Tìm kiếm..."
+        value={value}
+        onChangeText={onChange}
+      />
+    </Stack>
+  )
+}

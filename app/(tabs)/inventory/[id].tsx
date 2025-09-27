@@ -65,7 +65,6 @@ export default function ProductDetail() {
 
   useEffect(() => {
     if (data && !isNew) {
-
       reset({
         ...data,
         quantity: data.quantity?.toString() as unknown as number,

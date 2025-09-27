@@ -1,6 +1,6 @@
 import { ProductDto } from '@/dto/product.dto'
 import getImageUrl from '@/utils/get-image'
-import { Link, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { XStack, Text, Image, Stack } from 'tamagui'
 
 export interface ProductItemProps {
@@ -15,7 +15,7 @@ export function ProductItem({ product, onPress }: ProductItemProps) {
     if (onPress) {
       onPress()
     } else {
-      router.push(`/(tabs)/inventory/product/${product.id}`)
+      router.push(`/(tabs)/inventory/${product.id}`)
     }
   }
   return (

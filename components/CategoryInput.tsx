@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Input, Stack, Text, XStack, Button, YStack } from 'tamagui'
+import { Input, Stack, Text, XStack, Button } from 'tamagui'
 
 type Props = {
   value: string[]
@@ -29,7 +29,7 @@ export function CategoryInput({ value, onChangeText, placeholder }: Props) {
   }
 
   return (
-    <YStack gap="$2">
+    <Stack gap="$2">
       <Input
         value={input}
         onChangeText={setInput}
@@ -64,6 +64,6 @@ export function CategoryInput({ value, onChangeText, placeholder }: Props) {
             </XStack>
           ))}
       </XStack>
-    </YStack>
+    </Stack>
   )
 }

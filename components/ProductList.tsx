@@ -2,17 +2,20 @@ import DataWrapper from '@/components/DataWrapper'
 import { ProductItem } from '@/components/ProductItem'
 import { useGetProductsQuery } from '@/utils/api.service'
 import { FlatList, RefreshControl } from 'react-native'
-import { Stack, View, Button, XStack } from 'tamagui'
+import { View, Button, XStack } from 'tamagui'
 import React, { useState, useMemo } from 'react'
 import { SearchBar } from '@/components/SearchBar'
 import { FilterModal } from '@/components/FilterModal'
 import { SortSelect } from '@/components/SortSelect'
-import { GetProductsQueryDto, ProductDto } from '@/dto/product.dto'
+import { ProductDto } from '@/dto/product.dto'
 import { BASE_PRODUCT_QUERY, SORT_OPTIONS } from '@/constants'
 import { Filter } from '@tamagui/lucide-icons'
 
 const normalize = (text: string) =>
-  text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+  text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
 
 interface ProductListProps {
   onProductPress?: (product: ProductDto) => void
@@ -20,7 +23,8 @@ interface ProductListProps {
 }
 
 export function ProductList({ onProductPress, showFAB }: ProductListProps) {
-  const { data, isFetching, error, refetch } = useGetProductsQuery(BASE_PRODUCT_QUERY)
+  const { data, isFetching, error, refetch } =
+    useGetProductsQuery(BASE_PRODUCT_QUERY)
 
   const [searchQuery, setSearchQuery] = useState('')
   const [filterVisible, setFilterVisible] = useState(false)

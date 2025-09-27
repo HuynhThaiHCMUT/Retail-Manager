@@ -64,7 +64,9 @@ export function useConfirmAction(options?: UseConfirmActionOptions) {
           type: 'confirm',
           variant: (options?.confirmVariant as any) ?? 'warning',
           title: options?.confirmTitle ?? 'Xác nhận',
-          message: options?.confirmMessage ?? 'Bạn có chắc chắn muốn thực hiện thao tác này?',
+          message:
+            options?.confirmMessage ??
+            'Bạn có chắc chắn muốn thực hiện thao tác này?',
         })
       )
     },
