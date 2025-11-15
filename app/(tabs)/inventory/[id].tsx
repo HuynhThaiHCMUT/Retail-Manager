@@ -15,7 +15,7 @@ import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button, Image, Stack, Text, XStack } from 'tamagui'
 import { useEffect } from 'react'
-import { openDialog, registerDialogCallback } from '@/utils/dialog.slice'
+import { openDialog } from '@/store/dialog.slice'
 import { useAppDispatch } from '@/hooks/useAppHooks'
 import handleError from '@/utils/error-handler'
 import { skipToken } from '@reduxjs/toolkit/query'
@@ -27,6 +27,7 @@ import { Divider } from '@/components/Divider'
 import UnitsEditor from '@/components/UnitsEditor'
 import { UnitDto } from '@/dto/unit.dto'
 import { useConfirmAction } from '@/hooks/useConfirmAction'
+import DataWrapper from '@/components/DataWrapper'
 
 export default function ProductDetail() {
   const navigation = useNavigation()
@@ -37,7 +38,7 @@ export default function ProductDetail() {
   const id = idParam instanceof Array ? idParam[0] : idParam
   const isNew = id === 'new'
 
-  const { data, isLoading } = useGetProductQuery(
+  const { data, isLoading, error, refetch } = useGetProductQuery(
     !isNew ? (id as string) : skipToken
   )
 
@@ -108,8 +109,6 @@ export default function ProductDetail() {
           files: images,
         })
 
-        console.log(uploadResult)
-
         if ('error' in uploadResult) {
           dispatch(
             openDialog({
@@ -177,7 +176,7 @@ export default function ProductDetail() {
   }, [id, navigation])
 
   return (
-    <>
+    <DataWrapper isLoading={isLoading} error={error} refetch={refetch}>
       <ScreenContainer>
         <Stack px="$4" flex={1} gap="$2">
           <FormInput
@@ -291,6 +290,6 @@ export default function ProductDetail() {
       >
         {isNew ? 'Thêm sản phẩm' : 'Cập nhật sản phẩm'}
       </Button>
-    </>
+    </DataWrapper>
   )
 }

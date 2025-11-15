@@ -86,7 +86,6 @@ const UnitsEditor = forwardRef(
 
     useImperativeHandle(ref, () => ({
       validateAndSave: () => {
-        console.log('Validating units...', units)
         for (const unit of units) {
           if (!unit.name || unit.name.trim() === '') {
             rowRefs.current

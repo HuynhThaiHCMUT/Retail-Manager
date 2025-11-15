@@ -8,8 +8,17 @@ import {
 } from '@/utils/schema'
 
 export interface FilesUploadDto {
-  files: any[]
+  files: never[]
 }
+
+export const CategoryDtoSchema = z.object({
+  id: requiredStringSchema('id'),
+  name: requiredStringSchema('tên danh mục'),
+  picture: requiredStringSchema('ảnh đại diện').nullish(),
+  productCount: z.number().int().default(0),
+})
+
+export type CategoryDto = z.infer<typeof CategoryDtoSchema>
 
 export const CreateProductDtoSchema = z.object({
   name: requiredStringSchema('tên sản phẩm'),
@@ -19,7 +28,6 @@ export const CreateProductDtoSchema = z.object({
   price: parseIntegerSchema('Giá'),
   basePrice: parseIntegerSchema('Giá gốc').nullish(),
   quantity: parseIntegerSchema('Số lượng').nullish(),
-  minQuantity: parseIntegerSchema('Số lượng tối thiểu').nullish(),
   barcode: z.string().nullish(),
   baseUnit: z.string().nullish(),
 })
@@ -35,7 +43,6 @@ export const UpdateProductDtoSchema = z.object({
   price: parseIntegerSchema('Giá').nullish(),
   basePrice: parseIntegerSchema('Giá gốc').nullish(),
   quantity: parseIntegerSchema('Số lượng').nullish(),
-  minQuantity: parseIntegerSchema('Số lượng tối thiểu').nullish(),
   barcode: z.string().nullish(),
   baseUnit: z.string().nullish(),
   enabled: z.boolean().nullish(),
@@ -52,7 +59,6 @@ export const ProductDtoSchema = z.object({
   price: integerSchema('Giá'),
   basePrice: integerSchema('Giá gốc').nullish(),
   quantity: integerSchema('Số lượng').nullish(),
-  minQuantity: integerSchema('Số lượng tối thiểu').nullish(),
   barcode: z.string().nullish(),
   baseUnit: z.string().nullish(),
   enabled: z.boolean(),
@@ -66,7 +72,7 @@ export type ProductDto = z.infer<typeof ProductDtoSchema>
 export const GetProductsQueryDtoSchema = z.object({
   offset: z.number().int().default(0).nullish(),
   limit: z.number().int().default(10).nullish(),
-  sortBy: z.enum(['time', 'price-desc', 'price-asc']).nullish(),
+  sortBy: z.string().nullish(),
   name: z.string().nullish(),
   priceFrom: z.number().int().nullish(),
   priceTo: z.number().int().nullish(),

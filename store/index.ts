@@ -3,7 +3,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './auth.slice'
 import dialogReducer from './dialog.slice'
 import orderReducer from './order.slice'
-import api from './api.service'
+import api from '../utils/api.service'
 
 export const store = configureStore({
   reducer: {

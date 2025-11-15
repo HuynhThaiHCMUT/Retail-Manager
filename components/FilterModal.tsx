@@ -12,6 +12,7 @@ import {
   Label,
 } from 'tamagui'
 import { Divider } from './Divider'
+import { CategoryDto } from '@/dto/product.dto'
 
 interface FilterModalProps {
   visible: boolean
@@ -90,21 +91,21 @@ export function FilterModal({
                     if (i % 3 === 0) rows.push([])
                     rows[rows.length - 1].push(cat)
                     return rows
-                  }, [] as string[][])
+                  }, [] as CategoryDto[][])
                   .map((row, rowIndex) => (
                     <XStack key={rowIndex} gap="$2">
                       {row.map((cat) => {
-                        const isActive = categories.includes(cat)
+                        const isActive = categories.includes(cat.name)
                         return (
                           <Button
-                            key={cat}
+                            key={cat.id}
                             flex={1}
                             size="$3"
                             variant={isActive ? undefined : 'outlined'}
-                            onPress={() => toggleCategory(cat)}
+                            onPress={() => toggleCategory(cat.name)}
                           >
                             {isActive && <Check size={12} />}
-                            {cat}
+                            {cat.name}
                           </Button>
                         )
                       })}

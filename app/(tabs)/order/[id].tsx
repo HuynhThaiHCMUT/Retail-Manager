@@ -11,10 +11,7 @@ import {
   useGetOrderQuery,
   useGetProductsQuery,
 } from '@/utils/api.service'
-import { registerDialogCallback, openDialog } from '@/utils/dialog.slice'
-import handleError from '@/utils/error-handler'
-import { useAppDispatch } from '@/hooks/useAppHooks'
-import { OrderProductItemDto } from '@/utils/order.slice'
+import { OrderProductItemDto } from '@/store/order.slice'
 import { Trash2 } from '@tamagui/lucide-icons'
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import { useCallback, useLayoutEffect } from 'react'
@@ -25,7 +22,6 @@ import { useConfirmAction } from '@/hooks/useConfirmAction'
 export default function Order() {
   const navigation = useNavigation()
   const router = useRouter()
-  const dispatch = useAppDispatch()
 
   const { id: idParam } = useLocalSearchParams()
   const id = idParam instanceof Array ? idParam[0] : idParam
@@ -35,7 +31,7 @@ export default function Order() {
   const [deleteOrder, { isLoading: deleting }] = useDeleteOrderMutation()
 
   const orderProducts = data?.products.map((orderProduct) => {
-    const product = products?.find((p) => p.id === orderProduct.productId)
+    const product = products?.items.find((p) => p.id === orderProduct.productId)
     return {
       id: orderProduct.productId,
       name: product?.name || 'Unknown Product',

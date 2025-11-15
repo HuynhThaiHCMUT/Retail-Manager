@@ -1,4 +1,4 @@
-import { DialogProps, DialogVariant } from '@/utils/dialog.slice'
+import { DialogProps, DialogVariant } from '@/store/dialog.slice'
 import { CircleAlert, CircleCheckBig, CircleX } from '@tamagui/lucide-icons'
 import React, { ReactElement } from 'react'
 import { AlertDialog, Button, Stack, Text } from 'tamagui'

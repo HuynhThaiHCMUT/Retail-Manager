@@ -9,8 +9,8 @@ import { Mutex } from 'async-mutex'
 import { Platform } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
-import { RootState } from './store'
-import { removeUser, setUser } from './auth.slice'
+import { RootState } from '../store'
+import { removeUser, setToken, setUser } from '../store/auth.slice'
 import { AuthDto, AuthDtoSchema, SignInDto, SignUpDto } from '../dto/auth.dto'
 import { ApiError } from '../dto/error.dto'
 import {
@@ -20,6 +20,7 @@ import {
   UserDtoSchema,
 } from '../dto/user.dto'
 import {
+  CategoryDto,
   CreateProductDto,
   GetProductsQueryDto,
   ProductDto,
@@ -41,6 +42,8 @@ import {
   SummaryResponseDto,
   TopSoldItemDto,
 } from '@/dto/report.dto'
+import { PartialList } from './type'
+import { partialListSchema } from './schema'
 
 const mutex = new Mutex()
 
@@ -52,8 +55,6 @@ const baseQuery = fetchBaseQuery({
     if (token) {
       headers.set('Authorization', `Bearer ${token}`)
     }
-    headers.set('Content-Type', 'application/json')
-    headers.set('Accept', 'application/json')
     return headers
   },
 })
@@ -87,7 +88,7 @@ const customQuery: BaseQueryFn<
         extraOptions
       )
       if (result.data) {
-        api.dispatch(setUser(result.data as AuthDto))
+        api.dispatch(setToken(result.data as AuthDto))
         release()
         return await baseQuery(args, api, extraOptions)
       } else {
@@ -203,14 +204,64 @@ const api = createApi({
       }),
       invalidatesTags: ['User'],
     }),
-    getProducts: builder.query<ProductDto[], GetProductsQueryDto>({
+    uploadUserImage: builder.mutation<
+      string,
+      { id: string; file: ImagePickerAsset }
+    >({
+      query: ({ id, file }) => {
+        const formData = new FormData()
+
+        formData.append('file', {
+          uri: file.uri,
+          name: file.fileName,
+          type: file.mimeType,
+        } as any)
+
+        return {
+          url: `/users/${id}/picture`,
+          method: 'POST',
+          body: formData,
+        }
+      },
+    }),
+    getProducts: builder.query<PartialList<ProductDto>, GetProductsQueryDto>({
       query: (params) => ({
         url: 'products',
         params: params,
       }),
+      // only cache name, sortBy, priceFrom, priceTo, categories changes
+      serializeQueryArgs: ({ endpointName, queryArgs }) => endpointName + JSON.stringify({
+        name: queryArgs.name,
+        sortBy: queryArgs.sortBy,
+        priceFrom: queryArgs.priceFrom,
+        priceTo: queryArgs.priceTo,
+        categories: queryArgs.categories,
+      }),
+      merge: (currentCache, data) => {
+        currentCache.items.push(...(data.items ?? []))
+        currentCache.totalCount = data.totalCount
+      },
+
+      forceRefetch({ currentArg, previousArg }) {
+        if (!previousArg) return true
+        const resetChanged =
+          currentArg?.limit !== previousArg?.limit ||
+          currentArg?.name !== previousArg?.name ||
+          currentArg?.sortBy !== previousArg?.sortBy ||
+          currentArg?.priceFrom !== previousArg?.priceFrom ||
+          currentArg?.priceTo !== previousArg?.priceTo
+
+        const catsEqual =
+          JSON.stringify(currentArg?.categories ?? []) ===
+          JSON.stringify(previousArg?.categories ?? [])
+
+        const offsetChanged = currentArg?.offset !== previousArg?.offset
+
+        return resetChanged || !catsEqual || offsetChanged
+      },
       providesTags: ['Product'],
       extraOptions: {
-        responseSchema: ProductDtoSchema,
+        responseSchema: partialListSchema(ProductDtoSchema),
       },
     }),
     getProduct: builder.query<ProductDto, string>({
@@ -271,7 +322,7 @@ const api = createApi({
         }
       },
     }),
-    getCategories: builder.query<string[], void>({
+    getCategories: builder.query<CategoryDto[], void>({
       query: () => 'categories',
       providesTags: ['Product'],
     }),
@@ -343,6 +394,7 @@ export const {
   useCreateUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
+  useUploadUserImageMutation,
   useGetProductsQuery,
   useGetProductQuery,
   useCreateProductMutation,

@@ -11,7 +11,7 @@ export const parseIntegerSchema = (name: string) =>
   z
     .string()
     .transform((val) => parseInt(val, 10))
-    .refine((val) => !isNaN(val), { message: 'Số lượng phải là số' })
+    .refine((val) => !isNaN(val), { message: `${name} phải là một số` })
 export const dateSchema = (name: string) =>
   z
     .string()
@@ -35,3 +35,8 @@ export const roleSchema = z.nativeEnum(Role, {
 export const orderStatusSchema = z.nativeEnum(OrderStatus, {
   message: 'Trạng thái đơn hàng không hợp lệ',
 })
+export const partialListSchema = <T>(itemSchema: z.ZodType<T>) =>
+  z.object({
+    items: z.array(itemSchema),
+    totalCount: z.number(),
+  })

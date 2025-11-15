@@ -6,7 +6,7 @@ import {
   removeItem,
   updateQuantity,
   updateUnit,
-} from '@/utils/order.slice'
+} from '@/store/order.slice'
 import { Minus, Plus, Trash } from '@tamagui/lucide-icons'
 import { XStack, Text, Image, Stack, Button } from 'tamagui'
 import { Select } from './Select'

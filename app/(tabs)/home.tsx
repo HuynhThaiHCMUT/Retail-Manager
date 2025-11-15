@@ -1,3 +1,4 @@
+import DataWrapper from '@/components/DataWrapper'
 import { HomeBarChart } from '@/components/HomeBarChart'
 import { RangeButtonGroup } from '@/components/RangeButtonGroup'
 import { RangeType, MetricType } from '@/dto/report.dto'
@@ -30,16 +31,31 @@ export default function Home() {
   const [selectedRange, setSelectedRange] = useState<RangeType>('day')
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [selectedMetric, setSelectedMetric] = useState<MetricType>('revenue')
-  const { data: summary, refetch: refetchSummary } = useGetSummaryQuery({
+  const {
+    data: summary,
+    refetch: refetchSummary,
+    isLoading: isLoadingSummary,
+    error: errorSummary,
+  } = useGetSummaryQuery({
     range: selectedRange,
     date: selectedDate?.toISOString(),
   })
-  const { data: chart, refetch: refetchChart } = useGetChartQuery({
+  const {
+    data: chart,
+    refetch: refetchChart,
+    isLoading: isLoadingChart,
+    error: errorChart,
+  } = useGetChartQuery({
     range: selectedRange,
     metric: selectedMetric,
     date: selectedDate?.toISOString(),
   })
-  const { data: topSold, refetch: refetchTopSold } = useGetTopSoldQuery({
+  const {
+    data: topSold,
+    refetch: refetchTopSold,
+    isLoading: isLoadingTopSold,
+    error: errorTopSold,
+  } = useGetTopSoldQuery({
     range: selectedRange,
     date: selectedDate?.toISOString(),
   })
@@ -51,6 +67,7 @@ export default function Home() {
   const refetch = () => {
     refetchSummary()
     refetchChart()
+    refetchTopSold()
   }
 
   const themeMap: Record<MetricType, ThemeName> = {
@@ -83,72 +100,79 @@ export default function Home() {
           <RefreshControl refreshing={false} onRefresh={refetch} />
         }
       >
-        <XStack mx="$4">
-          <MetricToggle
-            value="revenue"
-            selected={selectedMetric}
-            onSelect={setSelectedMetric}
-            theme={themeMap.revenue}
-          >
-            <Stack>
-              <Text>Tổng doanh thu</Text>
-              <Text>{summary?.revenue || 0} đ</Text>
-            </Stack>
-          </MetricToggle>
+        <DataWrapper
+          py="$0"
+          isLoading={isLoadingSummary || isLoadingChart || isLoadingTopSold}
+          error={errorSummary || errorChart || errorTopSold}
+        >
+          <XStack>
+            <MetricToggle
+              value="revenue"
+              selected={selectedMetric}
+              onSelect={setSelectedMetric}
+              theme={themeMap.revenue}
+            >
+              <Stack>
+                <Text>Tổng doanh thu</Text>
+                <Text>{summary?.revenue || 0} đ</Text>
+              </Stack>
+            </MetricToggle>
 
-          <MetricToggle
-            value="orders"
-            selected={selectedMetric}
-            onSelect={setSelectedMetric}
-            theme={themeMap.orders}
-          >
-            <Stack>
-              <Text>Tổng đơn hàng</Text>
-              <Text>{summary?.ordersCount || 0}</Text>
-            </Stack>
-          </MetricToggle>
-        </XStack>
+            <MetricToggle
+              value="orders"
+              selected={selectedMetric}
+              onSelect={setSelectedMetric}
+              theme={themeMap.orders}
+            >
+              <Stack>
+                <Text>Tổng đơn hàng</Text>
+                <Text>{summary?.ordersCount || 0}</Text>
+              </Stack>
+            </MetricToggle>
+          </XStack>
 
-        <XStack mx="$4">
-          <MetricToggle
-            value="profit"
-            selected={selectedMetric}
-            onSelect={setSelectedMetric}
-            theme={themeMap.profit}
-          >
-            <Stack>
-              <Text>Tổng lợi nhuận</Text>
-              <Text>{summary?.profit || 0} đ</Text>
-            </Stack>
-          </MetricToggle>
+          <XStack>
+            <MetricToggle
+              value="profit"
+              selected={selectedMetric}
+              onSelect={setSelectedMetric}
+              theme={themeMap.profit}
+            >
+              <Stack>
+                <Text>Tổng lợi nhuận</Text>
+                <Text>{summary?.profit || 0} đ</Text>
+              </Stack>
+            </MetricToggle>
 
-          <MetricToggle
-            value="products"
-            selected={selectedMetric}
-            onSelect={setSelectedMetric}
-            theme={themeMap.products}
-          >
-            <Stack>
-              <Text>Tổng sản phẩm</Text>
-              <Text>{summary?.productsCount || 0}</Text>
-            </Stack>
-          </MetricToggle>
-        </XStack>
+            <MetricToggle
+              value="products"
+              selected={selectedMetric}
+              onSelect={setSelectedMetric}
+              theme={themeMap.products}
+            >
+              <Stack>
+                <Text>Tổng sản phẩm</Text>
+                <Text>{summary?.productsCount || 0}</Text>
+              </Stack>
+            </MetricToggle>
+          </XStack>
 
-        <HomeBarChart mx="$4" mt="$4" chartData={chartData ?? []} />
+          <HomeBarChart mt="$4" chartData={chartData ?? []} />
 
-        <Text mx="$4" mt="$4" fontWeight="bold" fontSize="$6">
-          Danh sách sản phẩm bán chạy
-        </Text>
+          <Text mt="$4" fontWeight="bold" fontSize="$6">
+            Danh sách sản phẩm bán chạy
+          </Text>
 
-        <Stack mx="$4" mb="$4" mt="$2" gap="$2">
-          {topSold?.map((item) => (
-            <XStack key={item.productId}>
-              <Text flex={1}>{item.productName}</Text>
-              <Text>{item.amountSold}</Text>
-            </XStack>
-          ))}
-        </Stack>
+          <Stack mb="$4" mt="$2" gap="$2">
+            {topSold?.map((item, index) => (
+              <XStack key={item.id}>
+                <Text>{index + 1}. </Text>
+                <Text flex={1}>{item.name}</Text>
+                <Text>{item.amountSold}</Text>
+              </XStack>
+            ))}
+          </Stack>
+        </DataWrapper>
       </ScrollView>
     </Stack>
   )

@@ -1,9 +1,9 @@
 import DataWrapper from '@/components/DataWrapper'
 import { ProductItem } from '@/components/ProductItem'
 import { useGetProductsQuery } from '@/utils/api.service'
-import { FlatList, RefreshControl } from 'react-native'
+import { ActivityIndicator, FlatList, RefreshControl } from 'react-native'
 import { View, Button, XStack } from 'tamagui'
-import React, { useState, useMemo } from 'react'
+import React, { useState } from 'react'
 import { SearchBar } from '@/components/SearchBar'
 import { FilterModal } from '@/components/FilterModal'
 import { SortSelect } from '@/components/SortSelect'
@@ -11,57 +11,42 @@ import { ProductDto } from '@/dto/product.dto'
 import { BASE_PRODUCT_QUERY, SORT_OPTIONS } from '@/constants'
 import { Filter } from '@tamagui/lucide-icons'
 
-const normalize = (text: string) =>
-  text
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-
 interface ProductListProps {
   onProductPress?: (product: ProductDto) => void
   showFAB?: React.ReactNode
 }
 
 export function ProductList({ onProductPress, showFAB }: ProductListProps) {
-  const { data, isFetching, error, refetch } =
-    useGetProductsQuery(BASE_PRODUCT_QUERY)
-
-  const [searchQuery, setSearchQuery] = useState('')
   const [filterVisible, setFilterVisible] = useState(false)
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000000])
-  const [sortByLocal, setSortByLocal] = useState('time')
+  const [params, setParams] = useState(BASE_PRODUCT_QUERY)
 
-  const filteredData = useMemo(() => {
-    if (!data) return []
-    return data
-      .filter((item) => normalize(item.name).includes(normalize(searchQuery)))
-      .filter(
-        (item) =>
-          item.categories &&
-          (selectedCategories.length === 0 ||
-            selectedCategories.includes(item.categories[0]))
-      )
-      .filter(
-        (item) => item.price >= priceRange[0] && item.price <= priceRange[1]
-      )
-      .sort((a, b) => {
-        if (sortByLocal === 'price-asc') return a.price - b.price
-        if (sortByLocal === 'price-desc') return b.price - a.price
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      })
-  }, [data, searchQuery, selectedCategories, priceRange, sortByLocal])
+  const { data, isLoading, isFetching, error, refetch } =
+    useGetProductsQuery(params)
 
+  const onEndReached = () => {
+    if (
+      !isFetching &&
+      data &&
+      data.items.length < data.totalCount
+    ) {
+      const nextOffset = (params.offset ?? 0) + (params.limit ?? 0)
+      setParams((prev) => ({
+        ...prev,
+        offset: nextOffset,
+      }))
+    }
+  }
+  
   return (
-    <DataWrapper isLoading={isFetching} error={error} refetch={refetch}>
-      <SearchBar value={searchQuery} onChange={setSearchQuery} />
+    <DataWrapper isLoading={isLoading} error={error} refetch={refetch}>
+      <SearchBar value={params.name ?? ''} onChange={(name) => setParams((prev) => ({ ...prev, name, offset: 0 }))} />
       <XStack my="$2">
         <View flex={1}>
           <SortSelect
             width={160}
             options={SORT_OPTIONS}
-            value={sortByLocal}
-            onChange={setSortByLocal}
+            value={params.sortBy ?? ''}
+            onChange={(sortBy) => setParams((prev) => ({ ...prev, sortBy, offset: 0 }))}
           />
         </View>
         <Button size="$3" onPress={() => setFilterVisible(true)}>
@@ -70,26 +55,40 @@ export function ProductList({ onProductPress, showFAB }: ProductListProps) {
         </Button>
       </XStack>
       <FlatList
-        data={filteredData}
+        data={data?.items ?? []}
         refreshControl={
           <RefreshControl refreshing={false} onRefresh={refetch} />
         }
         renderItem={({ item }) => (
           <ProductItem
             product={item}
-            key={item.id}
+            key={Date.now()}
             onPress={onProductPress ? () => onProductPress(item) : undefined}
           />
         )}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={5}
+        ListFooterComponent={
+          (isFetching && data?.items && data?.items.length > 0 ? (
+            <View p="$4">
+              <ActivityIndicator />
+            </View>
+          ) : null)
+        }
       />
       {showFAB}
       <FilterModal
         visible={filterVisible}
-        initialCategories={selectedCategories}
-        initialPriceRange={priceRange}
+        initialCategories={params.categories?.split(',') ?? []}
+        initialPriceRange={[params.priceFrom ?? 0, params.priceTo ?? 0]}
         onApply={(cats, pr) => {
-          setSelectedCategories(cats)
-          setPriceRange(pr)
+          setParams((prev) => ({
+            ...prev,
+            categories: cats.join(','),
+            priceFrom: pr[0],
+            priceTo: pr[1],
+            offset: 0,
+          }))
         }}
         onClose={() => setFilterVisible(false)}
       />

@@ -1,3 +1,5 @@
+import { ProductDto } from './product.dto'
+
 export type RangeType = 'day' | 'week' | 'month'
 export type MetricType = 'revenue' | 'profit' | 'orders' | 'products'
 
@@ -25,7 +27,5 @@ export type ChartItemDto = {
 }
 
 export type TopSoldItemDto = {
-  productId: string
-  productName: string
   amountSold: number
-}
+} & ProductDto

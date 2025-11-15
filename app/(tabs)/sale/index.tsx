@@ -1,13 +1,13 @@
 import { useRouter } from 'expo-router'
 import { useAppSelector, useAppDispatch } from '@/hooks/useAppHooks'
-import { clearOrder, OrderProductItemDto } from '@/utils/order.slice'
+import { clearOrder, OrderProductItemDto } from '@/store/order.slice'
 import { Button, Stack, Text, XStack } from 'tamagui'
 import { FlatList, Pressable } from 'react-native'
 import {
   OrderProductItem,
   OrderProductItemRef,
 } from '@/components/OrderProductItem'
-import { openDialog, registerDialogCallback } from '@/utils/dialog.slice'
+import { openDialog, registerDialogCallback } from '@/store/dialog.slice'
 import { useCreatePOSOrderMutation } from '@/utils/api.service'
 import handleError from '@/utils/error-handler'
 import { useRef } from 'react'

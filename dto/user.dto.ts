@@ -26,6 +26,7 @@ export type CreateUserDto = z.infer<typeof CreateUserDtoSchema>
 export const UpdateUserDtoSchema = z.object({
   id: requiredStringSchema('id'),
   name: z.string().nullish(),
+  password: passwordSchema.nullish(),
   email: emailSchema.nullish(),
   phone: phoneSchema.nullish(),
   role: roleSchema.nullish(),

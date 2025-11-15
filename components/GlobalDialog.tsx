@@ -1,7 +1,7 @@
-import { closeDialog, runDialogCallback } from '@/utils/dialog.slice'
+import { closeDialog, runDialogCallback } from '@/store/dialog.slice'
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppHooks'
 import { IconDialog } from './IconDialog'
-import { RootState } from '@/utils/store'
+import { RootState } from '@/store'
 import { ConfirmDialog } from './ConfirmDialog'
 
 export function GlobalDialog() {

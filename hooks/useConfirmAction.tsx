@@ -1,7 +1,7 @@
 // hooks/useConfirmAction.tsx
 import { useCallback } from 'react'
 import { useAppDispatch } from '@/hooks/useAppHooks'
-import { registerDialogCallback, openDialog } from '@/utils/dialog.slice'
+import { registerDialogCallback, openDialog } from '@/store/dialog.slice'
 import handleError from '@/utils/error-handler'
 
 type UseConfirmActionOptions = {
