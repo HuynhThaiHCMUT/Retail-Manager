@@ -8,10 +8,10 @@ import { useGetProductsQuery } from '@/api'
 import { ProductDto } from '@/dto'
 import { BASE_PRODUCT_QUERY, SORT_OPTIONS } from '@/utils'
 
-import { ProductFilterModal } from './ProductFilterModal'
-import { SearchBar } from './SearchBar'
 import { DataWrapper } from './DataWrapper'
+import { ProductFilterModal } from './ProductFilterModal'
 import { ProductItem } from './ProductItem'
+import { SearchBar } from './SearchBar'
 import { SortSelect } from './SortSelect'
 
 interface ProductListProps {
