@@ -1,12 +1,17 @@
-import { useEffect, useMemo, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { skipToken } from '@reduxjs/toolkit/query'
-import { User } from '@tamagui/lucide-icons'
+import { Trash2, User } from '@tamagui/lucide-icons'
 import { ImagePickerAsset } from 'expo-image-picker'
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import { UseFormReturn, useForm } from 'react-hook-form'
-import { ScreenContainer } from 'react-native-screens'
 import { Button, Image, Stack, Text, XStack } from 'tamagui'
 
 import {
@@ -16,20 +21,29 @@ import {
   useUpdateUserMutation,
   useUploadUserImageMutation,
 } from '@/api'
-import { DataWrapper, FormInput, PasswordInput, Select } from '@/components'
+import {
+  DataWrapper,
+  FormInput,
+  PasswordInput,
+  ScreenContainer,
+  Select,
+} from '@/components'
 import {
   CreateUserDto,
   CreateUserDtoSchema,
   UpdateUserDto,
   UpdateUserDtoSchema,
 } from '@/dto'
-import { useAppDispatch } from '@/hooks/useAppHooks'
+import { useAppDispatch, useAppSelector } from '@/hooks/useAppHooks'
+import { useConfirmAction } from '@/hooks/useConfirmAction'
 import { openDialog } from '@/store'
 import { Role, getImageUrl, handleError, pickImage } from '@/utils'
 
 export default function UserInfo() {
+  const navigation = useNavigation()
   const router = useRouter()
   const dispatch = useAppDispatch()
+  const auth = useAppSelector((state) => state.auth)
 
   const { id: idParam } = useLocalSearchParams()
   const id = idParam instanceof Array ? idParam[0] : idParam
@@ -40,6 +54,13 @@ export default function UserInfo() {
     error,
     refetch,
   } = useGetUserQuery(!isNew ? (id as string) : skipToken)
+
+  const { askConfirm: askConfirmDelete } = useConfirmAction({
+    confirmTitle: 'Xoá người dùng',
+    confirmMessage: 'Bạn có chắc chắn muốn xoá người dùng này?',
+    successTitle: 'Xoá người dùng thành công',
+    errorTitle: 'Xoá người dùng thất bại',
+  })
 
   const createForm = useForm<CreateUserDto>({
     resolver: zodResolver(CreateUserDtoSchema),
@@ -56,6 +77,7 @@ export default function UserInfo() {
     handleSubmit,
     setValue,
     reset,
+    watch,
     formState: { errors },
   } = form
 
@@ -126,6 +148,32 @@ export default function UserInfo() {
     router.back()
   }
 
+  const onDelete = useCallback(() => {
+    askConfirmDelete(
+      async () => {
+        const result = await deleteUser(id)
+        return result
+      },
+      { onSuccess: () => router.back() }
+    )
+  }, [askConfirmDelete, deleteUser, id, router])
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Button
+          size="$2"
+          theme="red"
+          disabled={isLoading || deleting}
+          onPress={onDelete}
+        >
+          <Trash2 size={12} />
+          Xoá
+        </Button>
+      ),
+    })
+  }, [id, navigation, isLoading, deleting, onDelete])
+
   return (
     <DataWrapper isLoading={isLoading} error={error} refetch={refetch}>
       <ScreenContainer>
@@ -193,19 +241,27 @@ export default function UserInfo() {
             <Text mb="$2" flex={1}>
               Phân quyền
             </Text>
-            <Select
-              width="$10"
-              placeholder={
-                userData?.role === Role.MANAGER ? 'Quản lý' : 'Nhân viên'
-              }
-              options={['Quản lý', 'Nhân viên']}
-              onChange={(value) =>
-                setValue(
-                  'role',
-                  value === 'Quản lý' ? Role.MANAGER : Role.EMPLOYEE
-                )
-              }
-            />
+            {auth?.user.role === Role.MANAGER &&
+            userData?.id !== auth?.user.id ? (
+              <Select
+                width="$10"
+                placeholder={
+                  userData?.role === Role.MANAGER ? 'Quản lý' : 'Nhân viên'
+                }
+                options={['Quản lý', 'Nhân viên']}
+                value={watch('role') === Role.MANAGER ? 'Quản lý' : 'Nhân viên'}
+                onChange={(value) =>
+                  setValue(
+                    'role',
+                    value === 'Quản lý' ? Role.MANAGER : Role.EMPLOYEE
+                  )
+                }
+              />
+            ) : (
+              <Text>
+                {userData?.role === Role.MANAGER ? 'Quản lý' : 'Nhân viên'}
+              </Text>
+            )}
           </XStack>
         </Stack>
       </ScreenContainer>

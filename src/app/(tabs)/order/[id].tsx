@@ -108,13 +108,18 @@ export default function Order() {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Button size="$2" theme="red" onPress={onDelete}>
+        <Button
+          size="$2"
+          theme="red"
+          disabled={isLoading || deleting}
+          onPress={onDelete}
+        >
           <Trash2 size={12} />
           Xoá
         </Button>
       ),
     })
-  }, [id, navigation])
+  }, [id, navigation, isLoading, deleting, onDelete])
 
   return (
     <DataWrapper p="$0" isLoading={isLoading} error={error} refetch={refetch}>
@@ -125,6 +130,13 @@ export default function Order() {
         <Text>
           Ngày tạo: {data && new Date(data.createdAt).toLocaleString('vi-VN')}
         </Text>
+        {data?.customerId && (
+          <>
+            <Text>Tên khách hàng: {data?.customerName}</Text>
+            <Text>Số điện thoại: {data?.phone}</Text>
+            <Text>Địa chỉ: {data?.address}</Text>
+          </>
+        )}
         <XStack>
           <Text>Trạng thái: </Text>
           <Text

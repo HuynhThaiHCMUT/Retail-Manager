@@ -3,12 +3,11 @@ import { useEffect } from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { skipToken } from '@reduxjs/toolkit/query'
-import { Image as ImageIcon, Trash2 } from '@tamagui/lucide-icons'
+import { Image as ImageIcon, Trash2, XCircle } from '@tamagui/lucide-icons'
 import { ImagePickerAsset } from 'expo-image-picker'
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import { useForm } from 'react-hook-form'
-import { ScreenContainer } from 'react-native-screens'
-import { Button, Image, Stack, Text, XStack } from 'tamagui'
+import { Button, Image, Stack, Text, View, XStack } from 'tamagui'
 
 import {
   useCreateProductMutation,
@@ -22,8 +21,10 @@ import {
   DataWrapper,
   Divider,
   FormInput,
+  ScreenContainer,
   UnitsEditor,
 } from '@/components'
+import { BarcodeInput } from '@/components/BarcodeInput'
 import { CreateProductDto, CreateProductDtoSchema, UnitDto } from '@/dto'
 import { useAppDispatch } from '@/hooks/useAppHooks'
 import { useConfirmAction } from '@/hooks/useConfirmAction'
@@ -168,13 +169,18 @@ export default function ProductDetail() {
       title: isNew ? 'Thêm sản phẩm' : 'Chi tiết sản phẩm',
       headerRight: () =>
         !isNew && (
-          <Button size="$2" theme="red" disabled={isLoading} onPress={onDelete}>
+          <Button
+            size="$2"
+            theme="red"
+            disabled={isLoading || deleting}
+            onPress={onDelete}
+          >
             <Trash2 size={12} />
             Xoá
           </Button>
         ),
     })
-  }, [id, navigation])
+  }, [id, navigation, isNew, isLoading, deleting, onDelete])
 
   return (
     <DataWrapper isLoading={isLoading} error={error} refetch={refetch}>
@@ -186,6 +192,14 @@ export default function ProductDetail() {
             label="Tên sản phẩm:"
             placeholder="Nhập tên sản phẩm"
             errors={errors}
+          />
+          <FormInput
+            control={control}
+            name="barcode"
+            label="Mã vạch:"
+            placeholder="Nhập mã vạch sản phẩm"
+            errors={errors}
+            InputComponent={BarcodeInput}
           />
           <FormInput
             control={control}
@@ -252,23 +266,64 @@ export default function ProductDetail() {
             </Stack>
             {images.length > 0 &&
               images.map((image, index) => (
-                <Image
-                  key={index}
-                  source={{ uri: image.uri }}
-                  width="$6"
-                  height="$6"
-                  alt="Ảnh sản phẩm"
-                />
+                <View key={index}>
+                  <Image
+                    source={{ uri: image.uri }}
+                    width="$6"
+                    height="$6"
+                    alt="Ảnh sản phẩm"
+                  />
+                  <View
+                    position="absolute"
+                    t={-10}
+                    r={-10}
+                    z={10}
+                    rounded="$12"
+                    width={20}
+                    height={20}
+                    items="center"
+                    justify="center"
+                    onPress={() =>
+                      setImages(images.filter((_, i) => i !== index))
+                    }
+                  >
+                    <XCircle size={12} />
+                  </View>
+                </View>
               ))}
             {data?.pictures &&
               data.pictures.map((picture, index) => (
-                <Image
-                  key={index}
-                  source={{ uri: getImageUrl(picture) }}
-                  width="$6"
-                  height="$6"
-                  alt="Ảnh sản phẩm"
-                />
+                <View key={index}>
+                  <Image
+                    source={{ uri: getImageUrl(picture) }}
+                    width="$6"
+                    height="$6"
+                    alt="Ảnh sản phẩm"
+                  />
+                  <View
+                    position="absolute"
+                    t={-10}
+                    r={-10}
+                    z={10}
+                    rounded="$12"
+                    width={20}
+                    height={20}
+                    items="center"
+                    justify="center"
+                    onPress={() => {
+                      dispatch(
+                        openDialog({
+                          variant: 'warning',
+                          title: 'Chức năng chưa được hỗ trợ',
+                          message:
+                            'Hiện tại chức năng xoá ảnh sản phẩm đã tải lên chưa được hỗ trợ. Vui lòng liên hệ quản trị viên để được giúp đỡ.',
+                        })
+                      )
+                    }}
+                  >
+                    <XCircle size={12} />
+                  </View>
+                </View>
               ))}
           </XStack>
           <Divider thickness={6} my="$2" mx="$-4" fullBleed />
@@ -280,7 +335,6 @@ export default function ProductDetail() {
             units={data?.units ?? []}
           />
         )}
-        <Divider thickness={6} my="$2" />
       </ScreenContainer>
       <Button
         onPress={handleSubmit(onSubmit)}

@@ -110,7 +110,7 @@ export default function Home() {
             >
               <Stack>
                 <Text>Tổng doanh thu</Text>
-                <Text>{summary?.revenue || 0} đ</Text>
+                <Text>{Math.round(summary?.revenue || 0)} đ</Text>
               </Stack>
             </MetricToggle>
 
@@ -122,7 +122,7 @@ export default function Home() {
             >
               <Stack>
                 <Text>Tổng đơn hàng</Text>
-                <Text>{summary?.ordersCount || 0}</Text>
+                <Text>{Math.round(summary?.ordersCount || 0)}</Text>
               </Stack>
             </MetricToggle>
           </XStack>
@@ -136,7 +136,7 @@ export default function Home() {
             >
               <Stack>
                 <Text>Tổng lợi nhuận</Text>
-                <Text>{summary?.profit || 0} đ</Text>
+                <Text>{Math.round(summary?.profit || 0)} đ</Text>
               </Stack>
             </MetricToggle>
 
@@ -148,7 +148,7 @@ export default function Home() {
             >
               <Stack>
                 <Text>Tổng sản phẩm</Text>
-                <Text>{summary?.productsCount || 0}</Text>
+                <Text>{Math.round(summary?.productsCount || 0)}</Text>
               </Stack>
             </MetricToggle>
           </XStack>

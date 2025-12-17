@@ -1,11 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Redirect, useRouter } from 'expo-router'
 import { useForm } from 'react-hook-form'
-import { ScreenContainer } from 'react-native-screens'
 import { Button, Image, Spinner, Stack } from 'tamagui'
 
 import { useSignInMutation } from '@/api'
-import { FormInput, PasswordInput } from '@/components'
+import { FormInput, PasswordInput, ScreenContainer } from '@/components'
 import { SignInDto, SignInDtoSchema } from '@/dto'
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppHooks'
 import { openDialog, setUser } from '@/store'
@@ -15,7 +14,6 @@ export default function SignIn() {
   const dispatch = useAppDispatch()
   const router = useRouter()
   const auth = useAppSelector((state) => state.auth)
-  if (auth.user.token) return <Redirect href="/(tabs)/home" />
 
   const {
     control,
@@ -42,6 +40,8 @@ export default function SignIn() {
       router.navigate('/(tabs)/home')
     }
   }
+
+  if (auth.user.token) return <Redirect href="/(tabs)/home" />
 
   return (
     <ScreenContainer>

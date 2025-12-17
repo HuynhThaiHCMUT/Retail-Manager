@@ -1,4 +1,4 @@
-import { ChevronRight, User } from '@tamagui/lucide-icons'
+import { ChevronRight, History, User } from '@tamagui/lucide-icons'
 import { Href, useRouter } from 'expo-router'
 import { Pressable } from 'react-native'
 import { Button, Stack, Text, XStack } from 'tamagui'
@@ -48,11 +48,18 @@ export default function Setting() {
       <Divider thickness={6} my="$4" mx="$-4" fullBleed />
       <Stack flex={1} px="$4">
         {user.role === 'MANAGER' && (
-          <SettingItem
-            title="Quản lý nhân viên"
-            icon={<User />}
-            route="/(tabs)/setting/staffs"
-          />
+          <>
+            <SettingItem
+              title="Quản lý nhân viên"
+              icon={<User />}
+              route="/(tabs)/setting/staffs"
+            />
+            <SettingItem
+              title="Xem nhật kí hoạt động"
+              icon={<History />}
+              route="/(tabs)/setting/audit-logs"
+            />
+          </>
         )}
       </Stack>
       <Button
@@ -77,7 +84,7 @@ function SettingItem({ title, icon, route }: SettingItemProps) {
   const router = useRouter()
   return (
     <Pressable onPress={() => router.push(route)}>
-      <XStack items="center">
+      <XStack items="center" my="$3">
         {icon}
         <Text flex={1} mx="$4" fontSize="$6">
           {title}

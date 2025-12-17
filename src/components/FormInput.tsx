@@ -20,7 +20,6 @@ export function FormInput({
   label,
   placeholder = '',
   defaultValue,
-  secureTextEntry = false,
   errors,
   InputComponent = Input,
   containerProps = {},
@@ -39,7 +38,6 @@ export function FormInput({
             value={value}
             placeholder={placeholder}
             defaultValue={defaultValue}
-            secureTextEntry={secureTextEntry}
             {...inputProps}
           />
           {errors?.[name] && <Text color="red">{errors[name].message}</Text>}

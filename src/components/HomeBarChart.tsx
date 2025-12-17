@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
+import { ScrollView } from 'react-native'
 import { BarChart, barDataItem } from 'react-native-gifted-charts'
 import { View, ViewProps, useTheme } from 'tamagui'
 
@@ -58,7 +59,7 @@ export function HomeBarChart({
 }: ChartProps) {
   const [width, setWidth] = useState(0)
   const theme = useTheme()
-  const scrollRef = useRef<any>(null)
+  const scrollRef = useRef<ScrollView>(null)
 
   // raw maximum from data
   const rawMax = useMemo(() => {
@@ -141,12 +142,15 @@ export function HomeBarChart({
     // small delay to allow chart to render; gifted-charts exposes scrollRef for programmatic scroll
     const t = setTimeout(() => {
       try {
-        if (scrollRef.current?.scrollToIndex) {
-          scrollRef.current.scrollToIndex(firstNonZeroIndex)
+        if (scrollRef.current?.scrollTo || firstNonZeroIndex === 0) {
+          scrollRef.current?.scrollTo({
+            x: firstNonZeroIndex * 44,
+            animated: true,
+          })
         } else if (scrollRef.current?.scrollToEnd) {
           scrollRef.current.scrollToEnd()
         }
-      } catch {
+      } catch (e) {
         try {
           scrollRef.current?.scrollToEnd?.()
         } catch {

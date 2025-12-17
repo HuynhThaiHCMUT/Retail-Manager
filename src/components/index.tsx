@@ -1,3 +1,4 @@
+export * from './AuditLogItem'
 export * from './CategoryInput'
 export * from './ConfirmDialog'
 export * from './DataWrapper'

@@ -148,7 +148,7 @@ export const UnitsEditor = forwardRef(
               <Text flex={3} fontWeight="600">
                 Tên đơn vị
               </Text>
-              <Text flex={1} fontWeight="600">
+              <Text flex={2} fontWeight="600">
                 Giá
               </Text>
               <Text flex={1} fontWeight="600">
@@ -268,7 +268,7 @@ export const UnitItem = forwardRef<UnitItemRef, UnitProps>(
               onChangeText={(t) =>
                 updateUnit(unit.id, { price: t === '' ? 0 : Number(t) })
               }
-              flex={1}
+              flex={2}
             />
             <Input
               value={String(
@@ -315,9 +315,9 @@ export const UnitItem = forwardRef<UnitItemRef, UnitProps>(
                 </>
               )}
             </Text>
-            <Button size="$2" onPress={() => changeMode(!isFractional)}>
+            {/* <Button size="$2" onPress={() => changeMode(!isFractional)}>
               <ArrowLeftRight size={12} />
-            </Button>
+            </Button> */}
           </XStack>
           {error && (
             <XStack width="100%" mb="$2" px="$2" theme="red">

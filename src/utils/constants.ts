@@ -1,6 +1,10 @@
 import { ThemeName } from 'tamagui'
 
-import { GetOrdersQueryDto, GetProductsQueryDto } from '@/dto'
+import {
+  GetAuditLogsQueryDto,
+  GetOrdersQueryDto,
+  GetProductsQueryDto,
+} from '@/dto'
 
 export const SORT_OPTIONS = [
   { label: 'Mới nhất', value: 'time' },
@@ -22,6 +26,12 @@ export const ORDER_STATUS_COLORS: Record<string, ThemeName> = {
   DONE: 'green',
 }
 
+export const MODULE_NAMES: Record<string, string> = {
+  Product: 'Sản phẩm',
+  Order: 'Đơn hàng',
+  User: 'Người dùng',
+}
+
 export const BASE_PRODUCT_QUERY: Readonly<GetProductsQueryDto> = {
   name: undefined,
   categories: undefined,
@@ -39,4 +49,10 @@ export const BASE_ORDER_QUERY: Readonly<GetOrdersQueryDto> = {
   sortBy: 'time',
   totalFrom: undefined,
   totalTo: undefined,
+}
+
+export const BASE_LOG_QUERY: Readonly<GetAuditLogsQueryDto> = {
+  module: undefined,
+  offset: 0,
+  limit: 10,
 }

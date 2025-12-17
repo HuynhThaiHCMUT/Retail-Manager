@@ -1,13 +1,19 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
-import { Input, Stack, StackProps } from 'tamagui'
+import { Input, StackProps, XStack } from 'tamagui'
 
 interface SearchBarProps extends StackProps {
   value: string
   onChange: (text: string) => void
+  rightIcon?: React.ReactNode
 }
 
-export function SearchBar({ value, onChange, ...rest }: SearchBarProps) {
+export function SearchBar({
+  value,
+  onChange,
+  rightIcon,
+  ...rest
+}: SearchBarProps) {
   const [text, setText] = useState(value)
   const searchTimeout = useRef<NodeJS.Timeout | null>(null)
 
@@ -22,15 +28,27 @@ export function SearchBar({ value, onChange, ...rest }: SearchBarProps) {
     [onChange]
   )
 
+  useEffect(() => {
+    if (value !== text) {
+      setText(value)
+    }
+  }, [value])
+
   return (
-    <Stack {...rest}>
+    <XStack items="center" {...rest}>
       <Input
         p="$0"
         size="$3"
         placeholder="Tìm kiếm..."
+        width="100%"
         value={text}
         onChangeText={handleSearchChange}
       />
-    </Stack>
+      {rightIcon && (
+        <XStack position="absolute" r="$2" t="$1" height="100%">
+          {rightIcon}
+        </XStack>
+      )}
+    </XStack>
   )
 }

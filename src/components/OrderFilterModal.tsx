@@ -5,8 +5,8 @@ import {
   Button,
   Dialog,
   Input,
-  Paragraph,
   ScrollView,
+  Text,
   XStack,
   YStack,
 } from 'tamagui'
@@ -41,6 +41,12 @@ export function OrderFilterModal({
       setMaxPrice(initialPriceRange[1])
     }
   }, [initialPriceRange])
+
+  const handleClear = () => {
+    setSelectedStatus(undefined)
+    setMinPrice(initialPriceRange[0])
+    setMaxPrice(initialPriceRange[1])
+  }
 
   const handleApply = () => {
     onApply(selectedStatus, [minPrice, maxPrice])
@@ -82,32 +88,33 @@ export function OrderFilterModal({
           gap="$4"
           p="$4"
           width="80%"
-          maxH="90%"
+          maxH={380}
+          flex={1}
         >
-          <Dialog.Title>Bộ lọc</Dialog.Title>
+          <Text fontWeight="600" fontSize="$8">
+            Bộ lọc
+          </Text>
 
           {/* Status */}
-          <YStack gap="$2">
-            <Paragraph fontWeight="600">Trạng thái đơn hàng</Paragraph>
-            <ScrollView maxH={150}>
-              <YStack gap="$2">
-                <XStack gap="$2">
-                  {renderStatusButton(OrderStatus.PENDING)}
-                  {renderStatusButton(OrderStatus.CONFIRMED)}
-                </XStack>
-                <XStack gap="$2">
-                  {renderStatusButton(OrderStatus.DONE)}
-                  {renderStatusButton(OrderStatus.CANCELLED)}
-                </XStack>
-              </YStack>
-            </ScrollView>
-          </YStack>
+          <Text fontWeight="600">Trạng thái đơn hàng</Text>
+          <ScrollView maxH={80} flex={1}>
+            <YStack gap="$2" flex={1}>
+              <XStack gap="$2">
+                {renderStatusButton(OrderStatus.PENDING)}
+                {renderStatusButton(OrderStatus.CONFIRMED)}
+              </XStack>
+              <XStack gap="$2">
+                {renderStatusButton(OrderStatus.DONE)}
+                {renderStatusButton(OrderStatus.CANCELLED)}
+              </XStack>
+            </YStack>
+          </ScrollView>
 
           <Divider />
 
           {/* Price Range */}
           <YStack gap="$2">
-            <Paragraph fontWeight="600">Khoảng giá</Paragraph>
+            <Text fontWeight="600">Khoảng giá</Text>
             <XStack gap="$2">
               <Input
                 flex={1}
@@ -129,8 +136,11 @@ export function OrderFilterModal({
           </YStack>
 
           {/* Actions */}
-          <XStack justify="flex-end" gap="$2" mt="$4">
+          <XStack justify="flex-end" gap="$2">
             <Button onPress={onClose}>Huỷ</Button>
+            <Button theme="red" onPress={handleClear}>
+              Xoá
+            </Button>
             <Button theme="blue" onPress={handleApply}>
               Áp dụng
             </Button>

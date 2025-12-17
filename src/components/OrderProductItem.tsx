@@ -147,7 +147,10 @@ export const OrderProductItem = forwardRef<
                   </Button>
                 </>
               ) : (
-                <></>
+                <>
+                  <Text flex={1}>{item.unit}</Text>
+                  <Text>{item.quantity}</Text>
+                </>
               )}
             </XStack>
           </Stack>

@@ -12,6 +12,10 @@ export default function SaleLayout() {
         name="staffs/index"
         options={{ title: 'Quản lý nhân viên' }}
       />
+      <Stack.Screen
+        name="audit-logs"
+        options={{ title: 'Nhật kí hoạt động' }}
+      />
     </Stack>
   )
 }

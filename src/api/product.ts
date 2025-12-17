@@ -31,12 +31,14 @@ export const productsApi = api.injectEndpoints({
       merge: (currentCache, data, { arg }) => {
         if (arg.offset === 0) {
           currentCache.items = data.items ?? []
-        } else {
+        } else if (
+          data.items &&
+          !currentCache.items.find((item) => item.id === data.items?.[0]?.id)
+        ) {
           currentCache.items.push(...(data.items ?? []))
         }
         currentCache.totalCount = data.totalCount
       },
-
       forceRefetch({ currentArg, previousArg }) {
         if (!previousArg) return true
         const resetChanged =

@@ -1,13 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { Filter } from '@tamagui/lucide-icons'
+import { useIsFocused } from '@react-navigation/native'
+import { Filter, ScanBarcode } from '@tamagui/lucide-icons'
 import { ActivityIndicator, FlatList, RefreshControl } from 'react-native'
+import { InteractionManager } from 'react-native'
 import { Button, View, XStack } from 'tamagui'
 
 import { useGetProductsQuery } from '@/api'
 import { ProductDto } from '@/dto'
 import { BASE_PRODUCT_QUERY, SORT_OPTIONS } from '@/utils'
 
+import BarcodeScanner from './BarcodeScanner'
 import { DataWrapper } from './DataWrapper'
 import { ProductFilterModal } from './ProductFilterModal'
 import { ProductItem } from './ProductItem'
@@ -22,11 +25,24 @@ interface ProductListProps {
 export function ProductList({ onProductPress, showFAB }: ProductListProps) {
   const [filterVisible, setFilterVisible] = useState(false)
   const [params, setParams] = useState(BASE_PRODUCT_QUERY)
+  const [scannerVisible, setScannerVisible] = useState(false)
 
-  const { data, isLoading, isFetching, error } = useGetProductsQuery(params)
+  const { data, isLoading, isFetching, error, refetch } =
+    useGetProductsQuery(params)
+  const isFocused = useIsFocused()
+
+  useEffect(() => {
+    if (isFocused) {
+      InteractionManager.runAfterInteractions(onRefresh)
+    }
+  }, [isFocused])
 
   const onRefresh = () => {
-    setParams(BASE_PRODUCT_QUERY)
+    if (params === BASE_PRODUCT_QUERY) {
+      refetch()
+    } else {
+      setParams(BASE_PRODUCT_QUERY)
+    }
   }
 
   const onEndReached = () => {
@@ -49,6 +65,13 @@ export function ProductList({ onProductPress, showFAB }: ProductListProps) {
       <SearchBar
         value={params.name ?? ''}
         onChange={(name) => setParams((prev) => ({ ...prev, name, offset: 0 }))}
+        rightIcon={
+          <ScanBarcode
+            size={32}
+            style={{ marginRight: 8 }}
+            onPress={() => setScannerVisible(true)}
+          />
+        }
       />
       <XStack my="$2">
         <View flex={1}>
@@ -79,7 +102,7 @@ export function ProductList({ onProductPress, showFAB }: ProductListProps) {
           />
         )}
         onEndReached={onEndReached}
-        onEndReachedThreshold={5}
+        onEndReachedThreshold={0.5}
         ListFooterComponent={
           isFetching && data?.items && data?.items.length > 0 ? (
             <View p="$4">
@@ -103,6 +126,13 @@ export function ProductList({ onProductPress, showFAB }: ProductListProps) {
           }))
         }}
         onClose={() => setFilterVisible(false)}
+      />
+      <BarcodeScanner
+        visible={scannerVisible}
+        onClose={() => setScannerVisible(false)}
+        onScanned={(result) =>
+          setParams((prev) => ({ ...prev, name: result.data, offset: 0 }))
+        }
       />
     </DataWrapper>
   )
